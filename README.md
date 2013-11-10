@@ -20,6 +20,7 @@ Added by this fork:
  * euIRC Spam checker workaround
  * euIRC compliant mode settings and whois information
  * Filter specific IRC messages to forward by keywords
+ * !die command for the owner
 
 
 ### Contributing

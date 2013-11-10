@@ -112,10 +112,15 @@ class Bot(threading.Thread):
 		try:
 		    wa_target = self.contacts[message.target] #try by phone
 		except KeyError:
-		    wa_target = self.get_group_from_chan(self.contacts, message.target) #try by nick
-		wa_target += "@s.whatsapp.net"
-		msg = "<%s> %s" %(message.get_nick(), message.msg.split(":", 1)[1])
-		self.wa_i.send(wa_target, msg)
+		    try:
+			wa_target = self.get_group_from_chan(self.contacts, message.target) #try by nick
+		    except:
+			wa_target = ""
+			info(2, "Group not recognized")
+		if wa_target != "":
+		    wa_target += "@s.whatsapp.net"
+		    msg = "<%s> %s" %(message.get_nick(), message.msg.split(":", 1)[1])
+		    self.wa_i.send(wa_target, msg)
 	    elif message.get_nick() == self.spamcheck_nick:
 		if self.irc_i.server_spamcheck == False:
 		    self.irc_i.server_spamcheck = True
@@ -230,7 +235,7 @@ info(4,"Contact list: %s" %contacts)
 with open("config.json.bak", "w") as f:
     json.dump(config, f, indent=4)
 
-info(1,"Program started")
+info(1,"Bot started")
 logging = cfg["logging"]
 if logging == 1:
     info(2,"Logging enabled")
@@ -247,4 +252,4 @@ except KeyboardInterrupt:
     info(4,"User wants to stop")
 finally:
     b.stop()
-info(1,"Program finished")
+info(1,"Bot finished")
