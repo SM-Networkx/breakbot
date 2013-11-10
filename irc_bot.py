@@ -41,21 +41,24 @@ class Handler(DefaultCommandHandler):
         self.irc_interface.parted(channel)
 
 class IRCInterface(threading.Thread):
-    def __init__(self, server, port, nick, channels, msg_handler, stopped_handler):
+    def __init__(self, server, port, nick, owner, channels, msg_handler, stopped_handler):
         threading.Thread.__init__(self)
         self.must_run = True
         self.connected = False
+        self.server_spamcheck = False
+        self.spamcheck_enabled = True
         self.msg_handler = msg_handler
         self.stopped_handler = stopped_handler
         self.nick = nick
         self.host = server
         self.port = port
         self.channels = channels
+	self.owner = 'Owner:'+owner+''
         self.send_queue = Queue()
         self.channels_joined = {}
         for c in self.channels:
             self.channels_joined[c] = False
-        self.cli = IRCClient(Handler, host=self.host, port=self.port, nick=self.nick, connect_cb=self.connect_callback)
+        self.cli = IRCClient(Handler, host=self.host, port=self.port, nick=self.nick, connect_cb=self.connect_callback, real_name=self.owner)
         self.cli.command_handler.set_irc_interface(self)
     @catch_them_all
     def connect_callback(self, cli):
@@ -69,14 +72,14 @@ class IRCInterface(threading.Thread):
         return result
     def joined(self, channel):
         self.channels_joined[channel] = True
-        info("Joined channel %s" %channel)
+        info(2, "Joined channel %s" %channel)
     def parted(self, channel):
         self.channels_joined[channel] = False
-        info("Left channel %s" %channel)
+        info(2, "Left channel %s" %channel)
         if self.must_run:
             self.join_channels()
     def connect(self):
-        info("Connecting to server")
+        info(2, "Connecting to server")
         self.server_connected = False
         self.conn = self.cli.connect()
         while not self.server_connected:
@@ -89,7 +92,9 @@ class IRCInterface(threading.Thread):
                 self.stop()
                 self.disconnected()
 
-        info("Connected to server")
+        info(2, "Connected to server")
+	info(3, "Setting Botmode on IRC queue")
+	self.send_queue.put("MODE %s +B" %self.nick)
     def next(self):
         try:
             self.conn.next()
@@ -99,36 +104,38 @@ class IRCInterface(threading.Thread):
             del self.conn
             self.connect()
     def join_channels(self):
-        for c in self.channels:
-            if not c in self.channels_joined or self.channels_joined[c] == False:
-                info("Joining channel %s" %c)
-                self.cli.send("JOIN", c)
-            while self.pending_channels():
-                if not self.must_run:
-                    raise Exception("Must stop")
-                self.conn.next()
+		if self.server_connected == True and self.server_spamcheck == True:
+			for c in self.channels:
+				if not c in self.channels_joined or self.channels_joined[c] == False:
+					info(3, "Joining channel %s" %c)
+					self.cli.send("JOIN", c)
+				while self.pending_channels():
+					if not self.must_run:
+						raise Exception("Must stop")
+					self.conn.next()
     @catch_them_all
     def run(self):
         self.must_run = True
-        info("%s connecting to %s:%s" %(self.nick, self.host, self.port))
+        info(2, "%s connecting to %s:%s" %(self.nick, self.host, self.port))
         self.connect()
-        self.join_channels()
+        if self.spamcheck_enabled == 0:
+	    self.join_channels()
         while not self.pending_channels():
             if not self.must_run:
                 raise Exception("Must stop")
             self.next()
         self.connected = True
-        info("%s connected to %s:%s" %(self.nick, self.host, self.port))
+        info(2, "%s connected to %s:%s" %(self.nick, self.host, self.port))
         while self.must_run:
             self.next()
             time.sleep(0.1)
             if not self.send_queue.empty():
                 text = self.send_queue.get()
-                info((" >>> IRC %s" %text).encode("utf-8"))
+                info(4, (" >>> IRC %s" %text).encode("utf-8"))
                 self.cli.send(text)
-                time.sleep(0.5) #throttle message sending in order to avoid excess flood kick
-        self.cli.send("QUIT :a la mieeerrrrda")
-        info("%s disconnected from %s:%s" %(self.nick, self.host, self.port))
+                time.sleep(0.5)
+        self.cli.send("QUIT :I Quit")
+        info(2, "%s disconnected from %s:%s" %(self.nick, self.host, self.port))
         self.disconnected()
     def disconnected(self):
         self.connected = False
@@ -138,7 +145,7 @@ class IRCInterface(threading.Thread):
     def stop(self):
         self.must_run = False
     def send(self, channel, text):
-        info((" ->- IRC %s: %s" %(channel, text)).encode("utf-8"))
+        info(4, (" ->- IRC %s: %s" %(channel, text)).encode("utf-8"))
         msg = "PRIVMSG %s :%s" %(channel, text)
         self.send_queue.put(msg)
     def wait_connected(self):

@@ -1,21 +1,20 @@
 {
     "contacts": {
-        "34555555530-1321985629@g.us": "#sample_room2",
-        "34555555373-1352752705@g.us": "#sample_room",
-        "34555555530": "person2",
-        "34555555125": "my_bot",
-        "34555555373": "person1",
-        "34555555806": "person3",
-        "34555555565": "person4",
-        "34555555602": "person5"
+        "4917699999999-111111111111@g.us": "#raspberry-pi",
+        "4917699999999": "ninpi"
     },
     "config": {
-        "wa_phone": "34555555125",
-        "wa_password": "JiO[base 64 encoded pass]AE=",
-        "irc_nick": "my_bot",
-        "irc_server_name": "irc.freenode.net",
+        "wa_phone": "4917699999999",
+        "wa_password": "TJfdghjdshglhfdhgjls=",
+        "irc_nick": "botnick",
+        "irc_server_name": "irc.de.euirc.net",
         "irc_server_port": "6667",
-        "bot_owner_nick": "person1",
-        "log_file": "log.txt"
+        "bot_owner_nick": "owner",
+        "log_file": "log.txt",
+        "logging": 1,
+        "verbose": 2,
+        "spamcheck": 1,
+        "spamcheck_nick": "SpamScanner",
+	"filter": "keyword1,keyword2,keword3"
     }
 }

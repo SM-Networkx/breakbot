@@ -14,7 +14,7 @@ class Timestamp():
     def to_human_str(self):
         timestamp = self.time
         dtime = datetime.datetime.fromtimestamp(timestamp)
-        return dtime.strftime("%Y-%m-%d %H:%M:%S.%f")
+        return dtime.strftime("%Y-%m-%d %H:%M:%S")
     def __str__(self):
         return str(self.ms_int())
     def ms_int(self):

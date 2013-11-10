@@ -5,9 +5,18 @@ import ntpath
 import inspect
 import traceback
 import sys
+import json
 
-logfile=open("bot.log", "a", buffering=0)
-def log(text, timestamp = None):
+with open("config.json", "r") as f:
+    config = json.loads(f.read())
+    cfg = config["config"]
+
+logging = cfg["logging"]
+verbose = cfg["verbose"]
+
+if logging == 1:
+    logfile = open("bot.log", "a", buffering=0)
+def log(level, text, timestamp = None):
     def path_leaf(path):
         head, tail = ntpath.split(path)
         return tail or ntpath.basename(head)
@@ -17,14 +26,16 @@ def log(text, timestamp = None):
     log_type = log_type[0].upper() * 2 # II for info, EE for error...
     if timestamp is None:
         timestamp = Timestamp()
-    text = "%s %s %s:%s: %s" %(timestamp.to_human_str(), log_type, filename, line_number, text)
+    text = "%s %s (%s) %s:%s: %s" %(timestamp.to_human_str(), log_type, level, filename, line_number, text)
     print text
-    logfile.write("\n%s" %text)
-def info(text):
-    log(text)
+    if logging == 1:
+	logfile.write("\n%s" %text)
+def info(level, text):
+    if verbose >= level:
+	log(level, text)
 def error(text):
     time = Timestamp()
     t, _, _ = sys.exc_info()
     if t is not None:
-        log("\n%s" %traceback.format_exc(), time)
+        log(9, "\n%s" %traceback.format_exc(), time)
     log(text, time)

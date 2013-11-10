@@ -39,7 +39,7 @@ class WAInterface(threading.Thread):
         self.signalsInterface.registerListener("receipt_messageDelivered", self.onMessageDelivered)
         self.signalsInterface.registerListener("ping", self.onPing)
     @catch_them_all
-    def onMessageReceived(self, messageId, jid, messageContent, timestamp, wantsReceipt, pushName):
+    def onMessageReceived(self, messageId, jid, messageContent, timestamp, wantsReceipt, pushName, isBroadCast):
         messageContent = unicode(messageContent, "utf-8")
         message = Message(kind="wa", nick_full=jid, chan=self.username, msg=messageContent)
         message.time = Timestamp(ms_int = timestamp*1000)
@@ -110,18 +110,18 @@ class WAInterface(threading.Thread):
     @catch_them_all
     def run(self):
         try:
-            info("Connecting as %s" %self.username)
+            info(3, "Connecting as %s" %self.username)
             self.must_run = True
             self.methodsInterface.call("auth_login", (self.username, self.password))
             self.wait_connected()
-            info("Connected as %s" %self.username)
+            info(2, "Connected as %s" %self.username)
             while self.must_run:
                 if not self.connected:
                     self.methodsInterface.call("auth_login", (self.username, self.password))
                 time.sleep(0.5)
                 #raw_input()
         finally:
-            info("Main loop closing")
+            info(3, "Main loop closing")
             self.connected = False
             self.stopped_handler()
             self.must_run = False
@@ -130,31 +130,31 @@ class WAInterface(threading.Thread):
     def send(self, target, text):
         self.wait_connected()
         self.methodsInterface.call("message_send", (target, text.encode("utf-8")))
-        info((" >>> WA %s: %s" %(target, text)).encode("utf-8"))
+        info(4, (" >>> WA %s: %s" %(target, text)).encode("utf-8"))
     @catch_them_all
     def onAuthSuccess(self, username):
-        info("Authed %s" % username)
+        info(3, "Authed %s" % username)
         self.connected = True
         self.methodsInterface.call("ready")
     @catch_them_all
     def onAuthFailed(self, username, reason):
-        info("Auth Failed: %s" %reason)
+        info(3, "Auth Failed: %s" %reason)
         self.connected = False
     @catch_them_all
     def onDisconnected(self, reason):
-        info("Disconnected because %s" %reason)
+        info(3, "Disconnected because %s" %reason)
         self.connected = False
     @catch_them_all
     def onMessageSent(self, jid, messageId):
-        info("Message successfully sent to %s" % jid)
+        info(4, "Message successfully sent to %s" % jid)
     @catch_them_all
     def onMessageDelivered(self, jid, messageId):
-        info("Message successfully delivered to %s" %jid)
+        info(4, "Message successfully delivered to %s" %jid)
         self.wait_connected()
         self.methodsInterface.call("delivered_ack", (jid, messageId))
     @catch_them_all
     def onPing(self, pingId):
-        info("Pong! (%s)" %pingId)
+        info(5, "Pong! (%s)" %pingId)
         self.wait_connected()
         self.methodsInterface.call("pong", (pingId,))
     def wait_connected(self):
