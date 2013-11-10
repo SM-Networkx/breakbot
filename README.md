@@ -15,6 +15,12 @@ It currently supports:
  * WhastApp image and video attachments.
  * Private messaging
 
+Added by this fork:
+
+ * euIRC Spam checker workaround
+ * euIRC compliant mode settings and whois information
+ * Filter specific IRC messages to forward by keywords
+
 
 ### Contributing
 
@@ -26,6 +32,9 @@ Breakbot is in early stages, lacks documentation everywhere, needs refactoring, 
 
 
 ### Configuration
+
+Same configuration steps like the original fork [stenyak/breakbot](https://github.com/stenyak/breakbot)
+just a modified configuration file with more options
 
 ## config.json
 
@@ -44,7 +53,7 @@ Breakbot is in early stages, lacks documentation everywhere, needs refactoring, 
         "bot_owner_nick": "owner",              <--- the owner nick of the bot
         "log_file": "log.txt",                  <--- logfile name
         "logging": 1,                           <--- logging to disk enable [0=no 1=yes]
-        "verbose": 2,                           <--- verbosity level [0-4 higher so more messages (for the whatsapp group chat id you can use level 4)
+        "verbose": 2,                           <--- verbosity level [0-4 higher so more messages (to find out the whatsapp group chat id you can use level 4)
         "spamcheck": 1,				<--- got the irc network a spamcheck [0=no 1=yes]
         "spamcheck_nick": "SpamScanner",        <--- the spamcheck nickname that checks [for none leave it as it is]
 	"filter": "keyword1,keyword2,keword3"	<--- filter out the messages that get forwarded? then put in the keywords delimited by comma, else leave it blank
