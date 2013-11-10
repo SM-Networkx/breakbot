@@ -29,6 +29,7 @@ Breakbot is in early stages, lacks documentation everywhere, needs refactoring, 
 
 ## config.json
 
+```json
 {
     "contacts": {
         "4917699999999-111111111111@g.us": "#raspberry-pi",   <--- The Whatsapp Group chat that is binded to a IRC Channel
@@ -49,7 +50,7 @@ Breakbot is in early stages, lacks documentation everywhere, needs refactoring, 
 	"filter": "keyword1,keyword2,keword3"	<--- filter out the messages that get forwarded? then put in the keywords delimited by comma, else leave it blank
     }
 }
-
+```
 
 Contact
 ------
