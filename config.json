@@ -12,7 +12,7 @@
         "bot_owner_nick": "owner",
         "log_file": "log.txt",
         "logging": 1,
-        "verbose": 4,
+        "verbose": 2,
         "spamcheck": 1,
         "spamcheck_nick": "SpamScanner",
 	"filter": "keyword1,keyword2,keword3"

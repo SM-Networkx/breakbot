@@ -188,11 +188,14 @@ class Bot(threading.Thread):
             #private message
             if message.target is None:
                 # directed to bot itself
-                nick = self.contacts[message.get_nick()]
-                irc_target = self.contacts[message.nick_full.split("@")[0]]
-                for line in lines:
-                    irc_msg = "<%s> %s" %(nick, line)
-                    self.irc_i.send(self.owner_nick, irc_msg)
+		try:
+            	    nick = self.contacts[message.get_nick()]
+		    irc_target = self.contacts[message.nick_full.split("@")[0]]
+            	    for line in lines:
+                	irc_msg = "<%s> %s" %(nick, line)
+                	self.irc_i.send(self.owner_nick, irc_msg)
+		except:
+		    info(2, "Contact not recognized (%s)" %message.get_nick())
             else:
                 # directed to someone
                 try:
@@ -210,12 +213,12 @@ class Bot(threading.Thread):
                 try:
                     msg = "<%s> %s" %(self.contacts[message.get_nick()], line)
                 except:
-                    error("Contact not recognized")
+                    info(2, "Contact not recognized (%s)" %message.get_nick())
                     msg = "<%s> %s" %(message.get_nick(), line)
                 try:
                     self.irc_i.send(self.contacts[message.chan], msg)
                 except:
-                    error("Channel %s not recognized" %(message.chan))
+                    info(2, "Channel %s not recognized" %(message.chan))
 
 import json
 with open("config.json", "r") as f:
