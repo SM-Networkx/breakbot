@@ -4,9 +4,9 @@ Breakbot
 Description
 -----------
 
-Breakbot is a software that serves as gateway between several communication protocols.
+This project is a fork of the breakbot from stenyak
 
-It was started as a way to scratch one of the author's own itch, i.e. to **break** free from the walled garden that WhatsApp is, and to be able to use a proper computer with a proper screen and a proper keyboard (I hate long chats in tiny screens).
+Breakbot is a software that serves as gateway between several communication protocols.
 
 It currently supports:
 
@@ -15,10 +15,6 @@ It currently supports:
  * WhastApp image and video attachments.
  * Private messaging
 
-Things it does **not** currently support:
-
- * DCC send, topic changes, etc.
- * Other protocols such as XMPP or ICQ.
 
 ### Contributing
 
@@ -29,52 +25,37 @@ Contact info is at the bottom of this document.
 Breakbot is in early stages, lacks documentation everywhere, needs refactoring, may set fire to your computer, take your jobs... the usual drill. Just don't blame me for any problem it causes.
 
 
-Getting started
----------------
-
-### Requisites
-
-You'll need a WhatsApp account (phone number + passsword) that Breakbot will use.
-
-Note that WhatsApp does **not** allow simultaneous connections, so you may want to get a secondary phone number for your Breakbot (e.g.: buy a second SIM card, or get a free number at [fonyou](www.fonyou.es), etc). Otherwise the bot would log you out of your phone's WhatsApp client.
-
-You can register a WhatsApp account for your number without an actual physical phone, by following step #4 in the list below.
-
 ### Configuration
 
-Note: all phone numbers must be specified as `international number` without `00` or `+`. *E.g: spanish number `600600600` would become `34600600600`*
+## config.json
 
-Steps:
+{
+    "contacts": {
+        "4917699999999-111111111111@g.us": "#raspberry-pi",   <--- The Whatsapp Group chat that is binded to a IRC Channel
+        "4917699999999": "botnick" <--- The Bot itself had to appear in the contact list too, you can add a lot more receipients
+    },
+    "config": {
+        "wa_phone": "4917699999999",            <--- your whatsapp fone number with country code
+        "wa_password": "TJfdghjdshglhfdhgjls=", <--- you precrypted whatsapp password string
+        "irc_nick": "botnick",                  <--- the nick the bot has on IRC
+        "irc_server_name": "irc.de.euirc.net",  <--- irc server it connects to
+        "irc_server_port": "6667",              <--- irc server port it should use
+        "bot_owner_nick": "owner",              <--- the owner nick of the bot
+        "log_file": "log.txt",                  <--- logfile name
+        "logging": 1,                           <--- logging to disk enable [0=no 1=yes]
+        "verbose": 2,                           <--- verbosity level [0-4 higher so more messages (for the whatsapp group chat id you can use level 4)
+        "spamcheck": 1,				<--- got the irc network a spamcheck [0=no 1=yes]
+        "spamcheck_nick": "SpamScanner",        <--- the spamcheck nickname that checks [for none leave it as it is]
+	"filter": "keyword1,keyword2,keword3"	<--- filter out the messages that get forwarded? then put in the keywords delimited by comma, else leave it blank
+    }
+}
 
-1. Clone the Breakbot repo.
-2. Get the dependencies installed by running `./get_libs.sh`.
-3. Add your bots to whatever WhatsApp group chats you want to bridge.
-4. [optional] Register the phone number against WhatsApp account using the last two options of `python Yowsup/yowsup-cli -h`.
-5. Initial setup: open `config.json`, go to `config` section, and customize all the fields.
- * `wa_password` is the base64-encoded passsword as returned by the `--exists` option of [yowsup-cli](https://github.com/tgalal/yowsup/wiki/yowsup-cli)
- * `wa_phone` is the phone number used by the bot to connect to WhatsApp. See `Requisites` above.
- * `irc_*` parameters are what you expect.
- * `bot_owner_nick` is the irc nick of the bot owner (needed for private messaging).
-6. Make sure your bot nick and phone are also in the contact list.
-7. Run `python bot.py` so that it connects to WhatsApp
- * Watch the screen for strings matching `NNN-NNN@g.us`. Those are the WhastApp group chats. Write them down somewhere.
- * Control+C to stop Breakbot.
-8. Final setup: open `config.json`, go to `contacts` section, and:
- * Add the desired WhatsApp **group chats** you wrote down to that list, together with the **IRC rooms** you want them bridged to.
- * Add the **phone numbers** and what **IRC nick** they map to.
-
-### Running
-
-Just cross your fingers, run `python bot.py` and wait for your bot to appear at the specified IRC channels (should take about 5-10 seconds with a proper connection).
-
-Once connected, everything you say on IRC should appear on WhastApp and viceversa.
 
 Contact
 ------
 
-You can notify me about problems and feature requests at the [issue tracker](https://github.com/stenyak/breakbot/issues)
+You can notify me about problems and feature requests at the [issue tracker](https://github.com/ninharp/breakbot/issues)
 
-Feel free to hack the code and send me GitHub pull requests, or traditional patches too; I'll be more than happy to merge them.
-
-For personal praise and insults, the author Bruno Gonzalez can be reached at [stenyak@stenyak.com](mailto:stenyak@stenyak.com) and `/dev/null` respectively.
+Fork copyright by Michael Sauer [sauer.uetersen@gmail.com](mailto:sauer.uetersen@gmail.com)
+The author of original Breakbot Bruno Gonzalez can be reached at [stenyak@stenyak.com](mailto:stenyak@stenyak.com) and `/dev/null` respectively.
 
